@@ -10,4 +10,5 @@ public interface MarketRequirementDao {
 
     MarketReqirement getMarketRequirement(String market);
 
+    void upsertMarketRequirement(MarketReqirement marketReqirement);
 }

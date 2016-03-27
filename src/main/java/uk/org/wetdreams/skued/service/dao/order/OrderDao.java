@@ -8,7 +8,7 @@ public interface OrderDao {
 
     Collection<Order> getOrders();
 
-    void addOrder(Order order);
+    void upsertOrder(Order order);
 
     void deleteOrder(Order order);
 }

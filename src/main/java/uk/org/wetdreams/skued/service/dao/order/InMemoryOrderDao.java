@@ -1,8 +1,6 @@
 package uk.org.wetdreams.skued.service.dao.order;
 
 import org.springframework.stereotype.Component;
-import uk.org.wetdreams.skued.service.dao.market.MarketRequirementDao;
-import uk.org.wetdreams.skued.service.domain.MarketReqirement;
 import uk.org.wetdreams.skued.service.domain.Order;
 
 import java.util.*;
@@ -13,11 +11,14 @@ public class InMemoryOrderDao implements OrderDao {
     private Map<String,Order> orders = new HashMap<>();
 
     InMemoryOrderDao(){
-        addOrder(new Order("Spain", 100));
-        addOrder(new Order("Germany", 20));
-        addOrder(new Order("France", 10));
-        addOrder(new Order("Brazil", 100));
-        addOrder(new Order("Argentina", 10000));
+        upsertOrder(new Order("Spain-Domestic", 20000));
+        upsertOrder(new Order("Germany-Domestic", 21000));
+        upsertOrder(new Order("France-Domestic", 10000));
+        upsertOrder(new Order("Brazil-Domestic", 500));
+        upsertOrder(new Order("Argentina-Domestic", 10000));
+        upsertOrder(new Order("Spain-Travel", 24500));
+        upsertOrder(new Order("Germany-Travel", 200));
+        upsertOrder(new Order("France-Travel", 1000));
     }
 
     @Override
@@ -26,7 +27,7 @@ public class InMemoryOrderDao implements OrderDao {
     }
 
     @Override
-    public void addOrder(Order order) {
+    public void upsertOrder(Order order) {
         orders.put(order.getMarket(), order);
     }
 

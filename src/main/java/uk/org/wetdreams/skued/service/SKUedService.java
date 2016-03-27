@@ -2,14 +2,17 @@ package uk.org.wetdreams.skued.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.org.wetdreams.skued.service.aggregator.OrderMatcher;
+import uk.org.wetdreams.skued.service.aggregator.OrderAggregator;
+import uk.org.wetdreams.skued.service.aggregator.RegionAggregator;
 import uk.org.wetdreams.skued.service.dao.market.MarketRequirementDao;
 import uk.org.wetdreams.skued.service.dao.order.OrderDao;
 import uk.org.wetdreams.skued.service.domain.MarketReqirement;
 import uk.org.wetdreams.skued.service.domain.Order;
 import uk.org.wetdreams.skued.service.domain.PurchaseOrder;
+import uk.org.wetdreams.skued.service.domain.RegionalMarketRequirement;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Component
 public class SKUedService {
@@ -21,10 +24,13 @@ public class SKUedService {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderMatcher orderMatcher;
+    private OrderAggregator orderAggregator;
 
-    public Collection<MarketReqirement> getAllMarketRequirements(){
-        return marketRequirementDao.getMarketRequirements();
+    @Autowired
+    private RegionAggregator regionAggregator;
+
+    public Collection<RegionalMarketRequirement> getAllMarketRequirements(){
+        return regionAggregator.aggregateMarketRequirements(marketRequirementDao.getMarketRequirements());
     }
 
     public Collection<Order> getAllOrders(){
@@ -32,14 +38,18 @@ public class SKUedService {
     }
 
     public Collection<PurchaseOrder> generatePurchaseOrders(){
-        return orderMatcher.aggregateOrders(orderDao.getOrders());
+        return orderAggregator.aggregateOrders(orderDao.getOrders());
     }
 
-    public void addOrder(Order order) {
-        orderDao.addOrder(order);
+    public void upsertOrder(Order order) {
+        orderDao.upsertOrder(order);
     }
 
     public void deleteOrder(Order order) {
         orderDao.deleteOrder(order);
+    }
+
+    public void upsertMarketRequirement(MarketReqirement marketReqirement) {
+        marketRequirementDao.upsertMarketRequirement(marketReqirement);
     }
 }

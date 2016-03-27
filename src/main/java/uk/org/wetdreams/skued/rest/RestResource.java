@@ -10,6 +10,7 @@ import uk.org.wetdreams.skued.service.SKUedService;
 import uk.org.wetdreams.skued.service.domain.MarketReqirement;
 import uk.org.wetdreams.skued.service.domain.Order;
 import uk.org.wetdreams.skued.service.domain.PurchaseOrder;
+import uk.org.wetdreams.skued.service.domain.RegionalMarketRequirement;
 
 @Component
 @Path("/rest")
@@ -23,8 +24,16 @@ public class RestResource {
     @GET
     @Path("/marketRequirement")
     @Produces(MediaType.APPLICATION_JSON)
-    public Iterable<MarketReqirement> marketReqirements() {
+    public Iterable<RegionalMarketRequirement> marketReqirements() {
         return service.getAllMarketRequirements();
+    }
+
+    @POST
+    @Path("/marketRequirement")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void postMarketReqirement(MarketReqirement marketReqirement) {
+        log.info("MarketReqirement upserted: " + marketReqirement);
+        service.upsertMarketRequirement(marketReqirement);
     }
 
     @GET
@@ -40,7 +49,7 @@ public class RestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void postOrder(Order order) {
         log.info("Order upserted: " + order);
-        service.addOrder(order);
+        service.upsertOrder(order);
     }
 
     @DELETE

@@ -1,110 +1,172 @@
 <!DOCTYPE html>
 <html ng-app="SKUedApp">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" attribute="text/css" href="css/bootstrap.min.css"/>
+        <script attribute="text/javascript" src="angular.min.js"></script>
+        <script attribute="text/javascript" src="app.js"></script>
+        <title>SKUed</title>
+    </head>
+    <body role="document" ng-controller="SKUedController as skuCtrl">
+        <div class="container theme-showcase" role="main">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" attribute="text/css" href="css/bootstrap.min.css"/>
-    <script attribute="text/javascript" src="angular.min.js"></script>
-    <script attribute="text/javascript" src="app.js"></script>
-    <title>SKUed</title>
-</head>
 
-<body role="document" ng-controller="SKUedController as skuCtrl">
+            <!-- Tab Management -->
 
-<div class="container theme-showcase" role="main">
+            <nav>
+                <ul class="pagination">
+                    <li ng-class="{ active:skuCtrl.isSet(1) }"><a href="#" ng-click="skuCtrl.setTab(1)">Manage SKUs</a></li>
+                    <li ng-class="{ active:skuCtrl.isSet(2) }"><a href="#" ng-click="skuCtrl.setTab(2)">Orders</a></li>
+                    <li ng-class="{ active:skuCtrl.isSet(3) }"><a href="#" ng-click="skuCtrl.setTab(3)">SKU Requirements</a></li>
+                </ul>
+            </nav>
 
-    <section>
 
-    <nav>
-        <ul class="pagination">
-            <li class="disabled"><a href="#">SKU Maintainance<span class="sr-only">(current)</span></a></li>
-            <li ng-class="{ active:skuCtrl.isSet(2) }"><a href="#" ng-click="skuCtrl.setTab(2)">Order Entry<span class="sr-only">(current)</span></a></li>
-            <li ng-class="{ active:skuCtrl.isSet(3) }"><a href="#" ng-click="skuCtrl.setTab(3)">Purchase Order Review<span class="sr-only"></span></a></li>
-        </ul>
-    </nav>
+            <!-- SKU Mangement -->
 
-    <div class="panel panel-default" ng-show="skuCtrl.isSet(2)">
-        <div class="panel-heading">
-            <h3 class="panel-title">Order Entry</h3>
-            <button type="button" class="btn btn-default btn" ng-click="skuCtrl.loadOrders()">
-                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-            </button>
-        </div>
+            <div class="panel panel-default" ng-show="skuCtrl.isSet(1)">
 
-        <div class="panel">
-
-            <form>
-            <div class="row">
-                <div class="col-lg-2">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="New Country" aria-describedby="basic-addon2" ng-model="newOrder.market">
-                    </div>
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <button type="button" class="btn btn-default btn" ng-click="skuCtrl.loadRequirements()">
+                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                        </button>
+                        SKU Maintainance
+                    </h3>
                 </div>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" ng-model="newOrder.qty">
-                        <span class="input-group-addon">units</span>
-                    </div>
+                <div class="panel-body">
+                    <p>This is the current market-by-market view of required SKUs. We expect maintainance to be managed externally.</p>
                 </div>
-                <div class="col-lg-4">
-                    <button type="button" class="btn btn-default btn" ng-click="skuCtrl.postOrder(newOrder.market, newOrder.qty)">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-                </form>
-
-            <div ng-repeat="order in skuCtrl.orders" class="row">
-                <div class="col-lg-2">
-                    {{order.market}}
-                </div>
-                <div class="col-lg-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" value="{{order.qty}}" ng-model="order.qty">
-                        <span class="input-group-addon">units</span>
-
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <button type="button" class="btn btn-default btn" ng-click="skuCtrl.postOrder(order.market, order.qty)">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </button>
-                    <button type="button" class="btn btn-default btn" ng-click="skuCtrl.deleteOrder(order.market)">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </button>
-                </div>
+                <table class="table" ng-repeat="region in skuCtrl.marketRequirements | orderBy:'marketGroup'">
+                    <thead>
+                        <tr class="alert-info">
+                            <th colspan="2"><b>{{region.marketGroup}}</b></th>
+                        </tr>
+                        <tr>
+                            <th width="50%">Market</th>
+                            <th>Required SKU</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="market in region.marketReqirements | orderBy:'market'">
+                            <td>{{market.market}}</td>
+                            <td ng-show="!market.edit"><a ng-click="market.edit=true">{{market.skuType}}</a></td>
+                            <td ng-show="market.edit">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Required SKU" value="market.skuType" ng-model="skuType">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" ng-click="market.edit=false; skuCtrl.postRequirement(market.market,market.marketGroup,skuType)">Save</button>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
-        </div>
 
-    </div>
+            <!-- Orders -->
 
+            <div class="panel panel-default" ng-show="skuCtrl.isSet(2)">
 
-    <div class="panel panel-default" ng-show="skuCtrl.isSet(3)">
-        <div class="panel-heading">
-            <h3 class="panel-title">Purchase Order Review</h3>
-        </div>
-
-        <div class="panel">
-
-            <div ng-repeat="order in skuCtrl.purchaseOrders" class="row">
-                <div class="col-lg-6">
-                    {{order.skuType}}
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <button type="button" class="btn btn-default btn" ng-click="skuCtrl.loadOrders()">
+                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                        </button>
+                        Order Entry
+                    </h3>
                 </div>
-                <div class="col-lg-5">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" value="{{order.qty}}">
-                        <span class="input-group-addon" id="basic-addon2">units</span>
-                    </div>
+                <div class="panel-body">
+                    <p>Orders received by market can be edited here.</p>
                 </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Market</th>
+                        <th width="50%">Order Quantity</th>
+                        <th width="30px"></th>
+                        <th width="30px"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" placeholder="New Country" aria-describedby="basic-addon2" ng-model="order.market">
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" value="{{order.qty}}" ng-model="order.qty">
+                                <span class="input-group-addon">units</span>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="skuCtrl.postOrder(order.market, order.qty)">
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr ng-repeat="order in skuCtrl.orders | orderBy:'market'">
+                        <td>{{order.market}}</td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" value="{{order.qty}}" ng-model="order.qty">
+                                <span class="input-group-addon">units</span>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="skuCtrl.postOrder(order.market, order.qty)">
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-sm" ng-click="skuCtrl.deleteOrder(order.market)">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- SKU Requirements -->
+
+            <div class="panel panel-default" ng-show="skuCtrl.isSet(3)">
+
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <button type="button" class="btn btn-default btn" ng-click="skuCtrl.loadPurchaseOrders()">
+                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                        </button>
+                        PO Review
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <p>By combining the market requirements and orders, we can calculate the order quantity by SKU.</p>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th width="50%">SKU</th>
+                        <th>Quantity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="purchaseOrder in skuCtrl.purchaseOrders | orderBy:'skuType'">
+                        <td><a href="#" ng-click="purchaseOrder.showCountries=!purchaseOrder.showCountries">{{purchaseOrder.skuType}}</a>
+                            <ul ng-repeat="market in purchaseOrder.markets | orderBy:'market'" ng-show="purchaseOrder.showCountries">
+                                <li>{{market}}</li>
+                            </ul>
+                        </td>
+                        <td>{{purchaseOrder.qty}} units.</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
-    </div>
-
-    </section>
-    </div>
-
-</body>
+    </body>
 </html>

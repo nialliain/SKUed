@@ -6,10 +6,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class MarketReqirement {
 
     private String market;
+    private String marketGroup;
     private String skuType;
 
-    public MarketReqirement(String market, String skuType){
+    public MarketReqirement(){
+    }
+
+    public MarketReqirement(String market, String marketGroup, String skuType){
         this.market = market;
+        this.marketGroup = marketGroup;
         this.skuType = skuType;
     }
 
@@ -27,5 +32,18 @@ public class MarketReqirement {
 
     public void setSkuType(String skuType) {
         this.skuType = skuType;
+    }
+
+    @Override
+    public String toString(){
+        return "MarketReqirement: {market = " + market + ", marketGroup = " + marketGroup + ", skuType = " + skuType + "}";
+    }
+
+    public String getMarketGroup() {
+        return marketGroup;
+    }
+
+    public void setMarketGroup(String marketGroup) {
+        this.marketGroup = marketGroup;
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class OrderMatcher {
+public class OrderAggregator {
 
     private static final String UNKNOWN_SKU = "No known SKU";
 
@@ -26,9 +26,9 @@ public class OrderMatcher {
             MarketReqirement req = requirementDao.getMarketRequirement(ord.getMarket());
             String skuType = req == null ? UNKNOWN_SKU : req.getSkuType();
             if(!pos.containsKey(skuType)){
-                pos.put(skuType,new PurchaseOrder(skuType,ord.getQty()));
+                pos.put(skuType,new PurchaseOrder(skuType,ord.getQty(),ord.getMarket()));
             } else {
-                pos.get(skuType).incrementOrder(ord.getQty());
+                pos.get(skuType).incrementOrder(ord.getQty(),ord.getMarket());
             }
         }
         return pos.values();

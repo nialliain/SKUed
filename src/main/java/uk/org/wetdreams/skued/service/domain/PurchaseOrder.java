@@ -1,13 +1,19 @@
 package uk.org.wetdreams.skued.service.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PurchaseOrder {
 
     private String skuType;
     private long qty;
+    private List<String> markets;
 
-    public PurchaseOrder(String skuType, long qty){
+    public PurchaseOrder(String skuType, long qty, String market){
         this.skuType = skuType;
         this.qty = qty;
+        markets = new ArrayList<>();
+        this.addMarket(market);
     }
 
     public String getSkuType() {
@@ -26,7 +32,16 @@ public class PurchaseOrder {
         this.qty = qty;
     }
 
-    public void incrementOrder(long qty) {
+    public void incrementOrder(long qty, String market) {
         this.qty += qty;
+        this.addMarket(market);
+    }
+
+    public List<String> getMarkets() {
+        return markets;
+    }
+
+    private void addMarket(String market) {
+        markets.add(market);
     }
 }
