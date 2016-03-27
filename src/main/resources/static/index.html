@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html ng-app="SKUedApp">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" attribute="text/css" href="css/bootstrap.min.css"/>
+    <script attribute="text/javascript" src="angular.min.js"></script>
+    <script attribute="text/javascript" src="app.js"></script>
+    <title>SKUed</title>
+</head>
+
+<body role="document" ng-controller="SKUedController as skuCtrl">
+
+<div class="container theme-showcase" role="main">
+
+    <section>
+
+    <nav>
+        <ul class="pagination">
+            <li class="disabled"><a href="#">SKU Maintainance<span class="sr-only">(current)</span></a></li>
+            <li ng-class="{ active:skuCtrl.isSet(2) }"><a href="#" ng-click="skuCtrl.setTab(2)">Order Entry<span class="sr-only">(current)</span></a></li>
+            <li ng-class="{ active:skuCtrl.isSet(3) }"><a href="#" ng-click="skuCtrl.setTab(3)">Purchase Order Review<span class="sr-only"></span></a></li>
+        </ul>
+    </nav>
+
+    <div class="panel panel-default" ng-show="skuCtrl.isSet(2)">
+        <div class="panel-heading">
+            <h3 class="panel-title">Order Entry</h3>
+            <button type="button" class="btn btn-default btn" ng-click="skuCtrl.loadOrders()">
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <div class="panel">
+
+            <form>
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="New Country" aria-describedby="basic-addon2" ng-model="newOrder.market">
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" ng-model="newOrder.qty">
+                        <span class="input-group-addon">units</span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <button type="button" class="btn btn-default btn" ng-click="skuCtrl.postOrder(newOrder.market, newOrder.qty)">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+                </form>
+
+            <div ng-repeat="order in skuCtrl.orders" class="row">
+                <div class="col-lg-2">
+                    {{order.market}}
+                </div>
+                <div class="col-lg-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" value="{{order.qty}}" ng-model="order.qty">
+                        <span class="input-group-addon">units</span>
+
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <button type="button" class="btn btn-default btn" ng-click="skuCtrl.postOrder(order.market, order.qty)">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn" ng-click="skuCtrl.deleteOrder(order.market)">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel panel-default" ng-show="skuCtrl.isSet(3)">
+        <div class="panel-heading">
+            <h3 class="panel-title">Purchase Order Review</h3>
+        </div>
+
+        <div class="panel">
+
+            <div ng-repeat="order in skuCtrl.purchaseOrders" class="row">
+                <div class="col-lg-6">
+                    {{order.skuType}}
+                </div>
+                <div class="col-lg-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Order Quantity" aria-describedby="basic-addon2" value="{{order.qty}}">
+                        <span class="input-group-addon" id="basic-addon2">units</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </section>
+    </div>
+
+</body>
+</html>
